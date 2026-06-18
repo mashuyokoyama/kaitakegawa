@@ -5,6 +5,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 
+import ArtworkImage from "@/components/ArtworkImage";
+import { artworkThumbSrc } from "@/lib/images";
+
 /**
  * 作品個別ページの共通ボディ（モック準拠）。
  * ルール・確定 baseline は docs/ARTWORK_DETAIL_SPEC.md を参照。
@@ -148,12 +151,19 @@ export default function ArtworkDetailBody({
       aria-label={`${title} fullscreen`}
       onClick={() => setIsFullscreen(false)}
     >
-      <img
-        src={heroSrc}
-        alt={title}
-        className="painting-detail__lightbox-img"
+      <div
+        className="painting-detail__lightbox-img-wrap"
         onClick={(event) => event.stopPropagation()}
-      />
+      >
+        <ArtworkImage
+          src={heroSrc}
+          alt={title}
+          className="painting-detail__lightbox-img"
+          width={2000}
+          height={2500}
+          sizes="100vw"
+        />
+      </div>
     </div>
   ) : null;
 
@@ -180,11 +190,15 @@ export default function ArtworkDetailBody({
                     onClick={() => setIsFullscreen(true)}
                     aria-label={`View ${title} fullscreen`}
                   >
-                    <img
+                    <ArtworkImage
                       ref={heroImgRef}
                       src={heroSrc}
                       alt=""
                       className="painting-detail__hero-img"
+                      width={2000}
+                      height={2500}
+                      sizes="(max-width: 767px) 100vw, min(848px, 100vw)"
+                      priority
                       onLoad={(event) => updateLandscapeState(event.currentTarget)}
                       onError={() => setIsLandscapeHero(false)}
                     />
@@ -220,7 +234,13 @@ export default function ArtworkDetailBody({
                               }
                               aria-pressed={isCurrent}
                             >
-                              <img src={src} alt="" draggable={false} />
+                              <img
+                                src={artworkThumbSrc(src)}
+                                alt=""
+                                draggable={false}
+                                loading="lazy"
+                                decoding="async"
+                              />
                             </button>
                           );
                         })}

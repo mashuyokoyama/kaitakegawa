@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import ArtworkImage from "@/components/ArtworkImage";
 import { ARTWORK_INDEX_NAV_ITEMS } from "@/components/artwork-index/site-nav";
 
 export default function Home() {
@@ -30,10 +31,14 @@ export default function Home() {
       <div className="top-page__stage">
         <div className="top-page__hero-zone">
           <div className="top-hero-wrap">
-            <img
+            <ArtworkImage
               src="/landing-hero.png"
               alt=""
               className="top-hero"
+              width={1200}
+              height={800}
+              sizes="100vw"
+              priority
             />
           </div>
         </div>

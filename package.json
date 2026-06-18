@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "optimize-images": "python3 scripts/optimize_images.py"
   },
   "dependencies": {
     "next": "16.1.6",

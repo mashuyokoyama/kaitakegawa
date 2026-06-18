@@ -1,5 +1,6 @@
 "use client";
 
+import ArtworkImage from "@/components/ArtworkImage";
 import ArtworkStudioLayout from "@/components/artwork-index/ArtworkStudioLayout";
 
 const FRAGMENT_COUNT = 33;
@@ -32,7 +33,14 @@ export default function FragmentsPage() {
       <div className="fragments-stack">
         {FRAGMENT_IMAGES.map((src) => (
           <figure key={src} className="fragments-stack__slide fragment-item">
-            <img src={src} alt="" loading="lazy" decoding="async" />
+            <ArtworkImage
+              src={src}
+              alt=""
+              width={1600}
+              height={2000}
+              sizes="100vw"
+              loading="lazy"
+            />
           </figure>
         ))}
       </div>

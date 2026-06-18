@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useMemo, type ReactNode } from "react";
 
+import ArtworkImage from "@/components/ArtworkImage";
+import { artworkThumbSrc } from "@/lib/images";
 import type { ArtworkStudioNavId } from "./site-nav";
 import ArtworkStudioLayout from "./ArtworkStudioLayout";
 
@@ -62,7 +64,14 @@ function renderGalleryCard(work: ArtworkIndexItem, extraClass?: string) {
         .filter(Boolean)
         .join(" ")}
     >
-      <img src={work.image} alt="" />
+      <ArtworkImage
+        src={artworkThumbSrc(work.image)}
+        alt=""
+        width={480}
+        height={600}
+        sizes="(max-width: 767px) 50vw, 40vw"
+        loading="lazy"
+      />
       <div className="paintings-studio__caption caption">{work.title}</div>
     </Link>
   );
@@ -184,6 +193,7 @@ export default function ArtworkIndexLayout({
             </section>
           </div>
         ) : null}
+        {!desktopTextList ? (
         <div className="paintings-studio__gallery-visual">
           {galleryRows?.length ? (
             galleryRows.map((row, rowIndex) =>
@@ -226,6 +236,7 @@ export default function ArtworkIndexLayout({
             items.map((work) => renderGalleryCard(work))
           )}
         </div>
+        ) : null}
       </div>
 
       {!desktopTextList ? (
@@ -238,7 +249,14 @@ export default function ArtworkIndexLayout({
                   href={work.href}
                   className="paintings-studio__card--mob"
                 >
-                  <img src={work.image} alt="" />
+                  <ArtworkImage
+                    src={artworkThumbSrc(work.image)}
+                    alt=""
+                    width={480}
+                    height={600}
+                    sizes="50vw"
+                    loading="lazy"
+                  />
                   <div className="paintings-studio__caption--mob">{work.title}</div>
                 </Link>
               ))}
@@ -250,7 +268,14 @@ export default function ArtworkIndexLayout({
                   href={work.href}
                   className="paintings-studio__card--mob"
                 >
-                  <img src={work.image} alt="" />
+                  <ArtworkImage
+                    src={artworkThumbSrc(work.image)}
+                    alt=""
+                    width={480}
+                    height={600}
+                    sizes="50vw"
+                    loading="lazy"
+                  />
                   <div className="paintings-studio__caption--mob">{work.title}</div>
                 </Link>
               ))}
