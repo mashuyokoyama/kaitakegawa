@@ -1,0 +1,1130 @@
+/**
+ * Paintings index — scoped under .paintings-studio
+ * PC (≥768px): baseline FIX — docs/PC_LAYOUT_BASELINE.md を参照。変更時は意図を残す。
+ * Mobile (≤767px): 一覧は PC と同様テキストリスト（`desktopTextList`）。画像カラムは未使用。
+ */
+
+/** Paintings index UI: uniform 14px monospace (logo, nav, sidebar, captions) */
+.paintings-studio {
+  --studio-gutter: 28px;
+  min-height: 100vh;
+  background-color: #c4bfb8;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #000;
+  letter-spacing: var(--letter-spacing);
+}
+
+/* ── TOP BAR (flow on mobile; fixed on ≥768px) ── */
+.paintings-studio .header {
+  position: relative;
+  height: 96px;
+  margin: 0;
+  padding: 0;
+  background-color: #c4bfb8;
+  border: none;
+  box-sizing: border-box;
+}
+
+.paintings-studio .header-logo {
+  position: absolute;
+  left: 28px;
+  top: 18px;
+  transform: none;
+  margin: 0;
+  padding: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  font-weight: 400;
+  color: #000;
+  opacity: 1;
+  text-decoration: none;
+  text-transform: lowercase;
+  cursor: pointer;
+}
+
+.paintings-studio .header-logo:hover {
+  text-decoration: underline;
+}
+
+/* 一覧レイヤー: 左上サイト名は白 */
+.paintings-studio:not(.paintings-studio--detail) .header-logo {
+  color: #fff;
+}
+
+.paintings-studio:not(.paintings-studio--detail) .header-logo:hover {
+  color: #fff;
+}
+
+/* List-page menu: centered row, monospace, pipes with even side spacing (mock) */
+.paintings-studio .header-nav {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 14px);
+  /* translate then slight horizontal compression (mock) */
+  transform: translate(-50%, -50%) scaleX(0.985);
+  transform-origin: center center;
+  margin: 0;
+  padding: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.paintings-studio__nav-item {
+  display: inline;
+  vertical-align: baseline;
+}
+
+.paintings-studio__nav-link {
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  color: #000;
+  opacity: 0.6;
+  text-decoration: none;
+  text-transform: lowercase;
+}
+
+.paintings-studio__nav-link:hover {
+  text-decoration: underline;
+  opacity: 1;
+}
+
+.paintings-studio__nav-link--current {
+  color: #fff;
+  opacity: 1;
+  font-weight: 400;
+}
+
+.paintings-studio__nav-sep {
+  display: inline-block;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  padding: 0 0.5em; /* even space on both sides of | */
+  color: #fff;
+  opacity: 1;
+  user-select: none;
+}
+
+/* ── MAIN ── */
+.paintings-studio .main-content {
+  margin-top: 40px;
+}
+
+.paintings-studio__main {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.paintings-studio__layout {
+  margin: 0;
+  padding: 0;
+}
+
+.paintings-studio__sidebar {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.paintings-studio__filters {
+  margin: 0;
+  padding: 0;
+}
+
+.paintings-studio__filter-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: #000;
+  opacity: 0.5;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  text-decoration-color: currentColor;
+}
+
+.paintings-studio__filter-btn:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.paintings-studio__filter-btn--active {
+  color: #fff;
+  opacity: 1;
+  font-weight: 400;
+}
+
+.paintings-studio__filter-btn--active:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.paintings-studio__filter-gap {
+  height: 8px;
+}
+
+.paintings-studio__gallery-shell {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 縦スクロールはそのまま、バーだけ非表示（Firefox / IE系 / Chromium） */
+.paintings-studio .paintings-studio__gallery-shell,
+.paintings-studio .paintings-studio__mob-scroll,
+.paintings-studio .paintings-studio__gallery-shell > .paintings-studio__detail-root {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.paintings-studio .paintings-studio__gallery-shell::-webkit-scrollbar,
+.paintings-studio .paintings-studio__mob-scroll::-webkit-scrollbar,
+.paintings-studio
+  .paintings-studio__gallery-shell
+  > .paintings-studio__detail-root::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.paintings-studio .gallery {
+  margin: 0;
+  padding: 0;
+}
+
+.paintings-studio__pc-text-list {
+  display: none;
+}
+
+.paintings-studio__card {
+  display: block;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  border: none;
+  box-sizing: border-box;
+}
+
+.paintings-studio__mob-scroll {
+  margin: 0;
+  padding: 0;
+}
+
+/* ═══════════════════════════════════════ PC ≥768px — fixed chrome, scroll main grid only */
+@media (min-width: 768px) {
+  .paintings-studio {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .paintings-studio .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    flex-shrink: 0;
+  }
+
+  .paintings-studio .main-content {
+    flex: 1;
+    min-height: 0;
+    margin-top: 0;
+    padding-top: calc(96px + 40px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Full-bleed width: white grid extends to viewport right (mock) */
+  .paintings-studio__main {
+    flex: 1;
+    min-height: 0;
+    max-width: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .paintings-studio__layout {
+    position: relative;
+    flex: 1;
+    min-height: calc(100vh - 96px - 40px);
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  /* 一覧ページ: 左フィルターカラム + 白 Maingrid（従来どおり） */
+  .paintings-studio__sidebar {
+    display: block;
+    position: fixed;
+    left: var(--studio-gutter);
+    right: auto;
+    top: auto;
+    bottom: 48px;
+    width: 180px;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    z-index: 150;
+    max-height: calc(100vh - 96px - 40px - 48px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+  }
+
+  .paintings-studio__filters {
+    position: static;
+    margin: 0;
+    padding: 0;
+  }
+
+  .paintings-studio__gallery-shell {
+    position: fixed;
+    left: calc(var(--studio-gutter) + 180px + 96px);
+    right: var(--studio-gutter);
+    top: calc(96px + 40px);
+    bottom: 0;
+    width: auto;
+    max-width: none;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background-color: var(--surface-panel);
+    box-sizing: border-box;
+    z-index: 100;
+  }
+
+  .paintings-studio--no-sidebar .paintings-studio__gallery-shell {
+    left: var(--studio-gutter);
+  }
+
+  .paintings-studio__gallery-shell.paintings-studio__gallery-shell--plain {
+    background-color: transparent;
+  }
+
+  /* Mock: ~40% of white panel per work, generous gutter + padding, portrait-friendly */
+  .paintings-studio .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 40%));
+    justify-content: center;
+    justify-items: stretch;
+    align-items: start;
+    column-gap: clamp(48px, 8%, 120px);
+    row-gap: clamp(72px, 10vh, 120px);
+    box-sizing: border-box;
+    padding: clamp(40px, 5vw, 72px) clamp(48px, 6vw, 88px) clamp(64px, 8vw, 100px);
+    min-height: min-content;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list {
+    display: block;
+    padding: clamp(56px, 8vw, 120px) clamp(48px, 6vw, 88px) clamp(72px, 10vw, 140px);
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__gallery-visual {
+    display: none;
+  }
+
+  .paintings-studio__pc-text-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(72px, 14vh, 150px);
+    margin: 0 auto;
+    width: min(980px, 100%);
+    text-align: center;
+  }
+
+  .paintings-studio__pc-text-section {
+    width: 100%;
+  }
+
+  .paintings-studio__pc-text-heading {
+    margin: 0 0 12px;
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.35;
+    font-family: inherit;
+  }
+
+  .paintings-studio__pc-text-all {
+    margin-left: 12px;
+    opacity: 1;
+    text-decoration: none;
+  }
+
+  .paintings-studio__pc-text-all--active {
+    color: #fff;
+  }
+
+  .paintings-studio__pc-text-all--button {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .paintings-studio__pc-text-all--button:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .paintings-studio__pc-text-values {
+    margin: 0 auto;
+    max-width: 95%;
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+    font-size: 14px;
+    line-height: 1.35;
+    letter-spacing: 0;
+    word-break: break-word;
+  }
+
+  .paintings-studio__pc-text-sep {
+    color: #fff;
+    opacity: 1;
+    margin: 0 0.5em;
+  }
+
+  .paintings-studio__pc-text-link {
+    color: rgba(0, 0, 0, 0.6);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .paintings-studio__pc-text-link--collection {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .paintings-studio__pc-text-link--collection-active {
+    color: #fff;
+  }
+
+  .paintings-studio__pc-text-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /*
+   * Paintings 一覧（モック）: 行単位 — 縦長は同一行2列、横長は1点を左／右／中央に寄せる
+   */
+  .paintings-studio .gallery.gallery--paintings-rows {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: clamp(72px, 10vh, 120px);
+    column-gap: unset;
+    grid-template-columns: unset;
+    justify-content: unset;
+    justify-items: unset;
+  }
+
+  .paintings-studio__gallery-row--pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 40%));
+    justify-content: center;
+    align-items: start;
+    column-gap: clamp(48px, 8%, 120px);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .paintings-studio__gallery-row--solo {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .paintings-studio__gallery-row--solo-center {
+    justify-content: center;
+  }
+
+  .paintings-studio__gallery-row--solo-left {
+    justify-content: flex-start;
+  }
+
+  .paintings-studio__gallery-row--solo-right {
+    justify-content: flex-end;
+  }
+
+  /*
+   * Bouquet: 上段2列と同じグリッドで帯を揃え、カードは白帯幅の 2/3・左寄せ。
+   * min(%, px) の max-width は広い画面で他作品より巨大に見えるため使わない。
+   */
+  .paintings-studio__gallery-row--solo.paintings-studio__gallery-row--solo-bouquet {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 40%));
+    justify-content: center;
+    align-items: start;
+    column-gap: clamp(48px, 8%, 120px);
+  }
+
+  /* 横長1枚行: モックは白帯の約 60–70% 幅で左/右/中央に寄せる */
+  .paintings-studio
+    .gallery-item--solo:not(.gallery-item--solo-bouquet):not(
+      .gallery-item--solo-wide-full
+    ) {
+    width: 100%;
+    max-width: min(68%, 760px);
+    min-width: 0;
+  }
+
+  /* 極横など: 白帯いっぱい（一覧の Max Width） */
+  .paintings-studio__gallery-row--solo.paintings-studio__gallery-row--solo-wide-full {
+    display: block;
+    width: 100%;
+  }
+
+  .paintings-studio__gallery-row--solo-wide-full .paintings-studio__card.gallery-item--solo-wide-full {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .paintings-studio .gallery-item--pair-cell {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .paintings-studio .gallery-item {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  /* .gallery-item より後で指定し、width/max-width 100% を打ち消す */
+  .paintings-studio__gallery-row--solo-bouquet .paintings-studio__card.gallery-item--solo-bouquet {
+    grid-column: 1 / -1;
+    justify-self: start;
+    width: 66.666%;
+    max-width: 66.666%;
+    min-width: 0;
+  }
+
+  .paintings-studio__card.gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    object-position: center top;
+    vertical-align: top;
+  }
+
+  .paintings-studio__caption.caption {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    opacity: 0.6;
+    font-family: inherit;
+  }
+
+  .paintings-studio__gallery-row--solo-left .paintings-studio__caption.caption {
+    text-align: left;
+  }
+
+  .paintings-studio__gallery-row--solo-right .paintings-studio__caption.caption {
+    text-align: right;
+  }
+
+  /* Artwork detail: same white panel padding rhythm as `.gallery` */
+  .paintings-studio__detail-root {
+    box-sizing: border-box;
+    min-height: 100%;
+    width: 100%;
+    padding: clamp(40px, 5vw, 72px) clamp(48px, 6vw, 88px) clamp(64px, 8vw, 100px);
+  }
+
+  .paintings-studio__mob-scroll {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════ MOBILE ≤767px — fixed top bar; scroll main area
+ * テキスト一覧（`gallery--with-pc-text-list`）: PC と同じ Collections / Titles・taupe 地・画像なし。
+ * 画像カラム（`paintings-studio__mob-scroll`）は `desktopTextList` なしの一覧向けにのみ DOM 出力。 */
+@media (max-width: 767px) {
+  .paintings-studio {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .paintings-studio .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    height: auto;
+    min-height: var(--sp-header-min-height);
+    flex-shrink: 0;
+  }
+
+  .paintings-studio .header-logo {
+    left: max(var(--sp-content-inset-left), env(safe-area-inset-left));
+    right: auto;
+    top: var(--sp-header-logo-top);
+    transform: none;
+    font-size: 14px;
+  }
+
+  .paintings-studio .header-nav {
+    left: auto;
+    right: max(var(--sp-content-inset-right), env(safe-area-inset-right));
+    top: var(--sp-header-nav-top);
+    transform: none;
+    transform-origin: right center;
+    white-space: normal;
+    font-size: 14px;
+    text-align: right;
+    max-width: calc(
+      100vw - var(--sp-content-inset-left) - var(--sp-content-inset-right)
+    );
+  }
+
+  .paintings-studio__main {
+    flex: 1;
+    min-height: 0;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .paintings-studio .main-content {
+    flex: 1;
+    min-height: 0;
+    margin-top: 0;
+    padding-top: var(--sp-header-main-offset);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Fragments: 写真をヘッダー直下まで伸ばし、透過メニュー直下が body 色にならないようにする */
+  .paintings-studio.paintings-studio--fragments .main-content {
+    padding-top: 0;
+  }
+
+  .paintings-studio__layout {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .paintings-studio__sidebar {
+    display: none !important;
+  }
+
+  .paintings-studio__gallery-shell {
+    flex: 1;
+    min-height: 0;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .paintings-studio__gallery-shell > .paintings-studio__detail-root {
+    flex: 1;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--surface-panel);
+    padding: 24px 16px 48px;
+    box-sizing: border-box;
+  }
+
+  .paintings-studio .gallery:not(.gallery--with-pc-text-list) {
+    display: none !important;
+  }
+
+  /* SP テキスト一覧 — taupe 地・サムネイルなし・ロゴ左端ライン（--sp-text-align-left）に揃える */
+  .paintings-studio .gallery.gallery--with-pc-text-list {
+    display: block !important;
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 24px
+      max(var(--sp-content-inset-right), env(safe-area-inset-right))
+      max(40px, env(safe-area-inset-bottom))
+      max(var(--sp-content-inset-left), env(safe-area-inset-left));
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__gallery-visual {
+    display: none !important;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-list {
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(48px, 10vh, 100px);
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    text-align: left;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-section {
+    width: 100%;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-heading {
+    margin: 0 0 12px;
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.35;
+    font-family: inherit;
+    text-align: left;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-all {
+    margin-left: 12px;
+    opacity: 1;
+    text-decoration: none;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-all--active {
+    color: #fff;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-all--button {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-all--button:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-values {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin: 0;
+    max-width: 100%;
+    color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+    font-size: 14px;
+    line-height: 1.35;
+    letter-spacing: 0;
+    text-align: left;
+  }
+
+  /* 各項目（| + ラベル）を1単位 — 単位内は折らず、行末で次の単位へ折り返す */
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-unit {
+    display: inline-flex;
+    align-items: baseline;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  /* Collections: 年とシリーズを同一の flex 流しに */
+  .paintings-studio
+    .gallery.gallery--with-pc-text-list
+    .paintings-studio__pc-text-values-years,
+  .paintings-studio
+    .gallery.gallery--with-pc-text-list
+    .paintings-studio__pc-text-values-names {
+    display: contents;
+  }
+
+  .paintings-studio
+    .gallery.gallery--with-pc-text-list
+    .paintings-studio__pc-text-values-years
+    > .paintings-studio__pc-text-unit:last-child::after {
+    content: "|";
+    display: inline;
+    padding: 0 0.5em;
+    color: #fff;
+    opacity: 1;
+    user-select: none;
+    vertical-align: baseline;
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-sep {
+    color: #fff;
+    opacity: 1;
+    margin: 0 0.5em;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-link {
+    color: rgba(0, 0, 0, 0.6);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-link--collection {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-link--collection-active {
+    color: #fff;
+  }
+
+  .paintings-studio .gallery.gallery--with-pc-text-list .paintings-studio__pc-text-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .paintings-studio__mob-scroll {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: scroll;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    background: var(--surface-panel);
+    box-sizing: border-box;
+  }
+
+  .paintings-studio__canvas {
+    width: 200vw;
+    min-width: 200vw;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 24px;
+    box-sizing: border-box;
+    background: var(--surface-panel);
+  }
+
+  .paintings-studio__col {
+    width: 85vw;
+    flex-shrink: 0;
+    padding: 0 16px;
+    box-sizing: border-box;
+    scroll-snap-align: start;
+  }
+
+  .paintings-studio__col--right {
+    margin-left: 15vw;
+  }
+
+  .paintings-studio__card--mob {
+    margin: 0 0 48px;
+    padding: 0;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .paintings-studio__card--mob:last-child {
+    margin-bottom: 0;
+  }
+
+  .paintings-studio__card--mob img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .paintings-studio__caption--mob {
+    margin: 8px 0 0;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    opacity: 0.6;
+    font-family: inherit;
+  }
+}
+
+/* ═══════════════════════════════════════ Detail page — white chrome + centered column (mock)
+ * BASELINE 固定: docs/ARTWORK_DETAIL_SPEC.md「確定 baseline」参照。
+ * トークンは同ファイルと同期すること */
+.paintings-studio--detail {
+  /* 640 + ギャップ + 右列 160 をグレー中央のまま収めるため 960 より広げる */
+  --detail-content-max-pc: 1040px;
+  --detail-content-max-sp: 560px;
+  /* 白パネル内の先頭余白（一覧グリッドと同じく bar 下からすぐ本文） */
+  --detail-root-pad-top: 0;
+  --detail-root-pad-bottom: clamp(120px, 18vh, 220px);
+  --detail-filter-max-width: min(42vw, 280px);
+  /* 個別ページ: 現在地のトップナビ項目・サイドの現在有効フィルター */
+  /* テラコッタ系・やや明るめ（はっきり見えるが派手すぎない） */
+  --detail-menu-active-color: #c27845;
+  background-color: var(--surface-panel);
+}
+
+.paintings-studio--detail .header {
+  background-color: var(--surface-panel);
+}
+
+/* 個別ページレイヤー: 左上サイト名はオレンジ（現在地ナビと揃える） */
+.paintings-studio--detail .header-logo {
+  color: var(--detail-menu-active-color);
+}
+
+.paintings-studio--detail .header-logo:hover {
+  color: var(--detail-menu-active-color);
+}
+
+/* 白背景上: 現在地はオレンジ（一覧の白文字とは別） */
+.paintings-studio--detail .paintings-studio__nav-link--current {
+  color: var(--detail-menu-active-color);
+  opacity: 1;
+  font-weight: 500;
+}
+
+.paintings-studio--detail .paintings-studio__nav-link--current:hover {
+  color: var(--detail-menu-active-color);
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-color: var(--detail-menu-active-color);
+}
+
+.paintings-studio--detail .paintings-studio__nav-sep {
+  color: rgba(0, 0, 0, 0.28);
+}
+
+.paintings-studio--detail .paintings-studio__filter-btn--active {
+  color: var(--detail-menu-active-color);
+  opacity: 1;
+  font-weight: 500;
+}
+
+.paintings-studio--detail .paintings-studio__filter-btn--active:hover {
+  color: var(--detail-menu-active-color);
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-color: var(--detail-menu-active-color);
+}
+
+@media (min-width: 768px) {
+  /*
+   * 個別ページのみ: サイドバー「エリア」なし。フィルターは左下テキスト常駐（背景上）。
+   * Maingrid は左右ガターのみ（一覧の 180+96 オフセットなし）。
+   */
+  /* TOP bar 高さは一覧と同じ 96px（白背景のみ上書きしていたため明示） */
+  .paintings-studio--detail .header {
+    height: 96px;
+    min-height: 96px;
+  }
+
+  .paintings-studio--detail .paintings-studio__sidebar {
+    width: auto;
+    max-width: var(--detail-filter-max-width);
+    background: none;
+    z-index: 160;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    pointer-events: none;
+  }
+
+  .paintings-studio--detail .paintings-studio__sidebar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  .paintings-studio--detail .paintings-studio__sidebar .paintings-studio__filters,
+  .paintings-studio--detail .paintings-studio__sidebar .paintings-studio__filters * {
+    pointer-events: auto;
+  }
+
+  .paintings-studio--detail .paintings-studio__sidebar .paintings-studio__filter-btn {
+    width: max-content;
+    max-width: 100%;
+  }
+
+  /* 白パネル位置・メイン上余白は一覧ページと同一（96px bar + 40px） */
+  .paintings-studio--detail .paintings-studio__gallery-shell {
+    left: var(--studio-gutter);
+    right: var(--studio-gutter);
+    top: calc(96px + 40px);
+    display: block;
+    background-color: var(--surface-panel);
+    /* 横スクロール・横スワイプ不可（縦のみ） */
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+
+  .paintings-studio--detail .main-content {
+    padding-top: calc(96px + 40px);
+  }
+
+  .paintings-studio--detail .paintings-studio__layout {
+    min-height: calc(100vh - 96px - 40px);
+  }
+
+  .paintings-studio--detail .paintings-studio__detail-root {
+    width: 100%;
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: var(--detail-root-pad-top);
+    padding-bottom: var(--detail-root-pad-bottom);
+    overflow-x: hidden;
+    touch-action: pan-y;
+  }
+
+  /*
+   * ビューポート張り出し（100vw + 負マージン）は横オーバーフロー／タッチ横移動の原因になるため廃止。
+   * 白パネル幅内で中央寄せ（下スクロールのみ）。
+   */
+  .paintings-studio--detail .painting-detail__viewport-frame {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    touch-action: pan-y;
+  }
+
+  .paintings-studio--detail
+    .painting-detail__viewport-frame
+    .painting-detail__content {
+    width: 100%;
+    max-width: min(var(--detail-content-max-pc), 100%);
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 767px) {
+  .paintings-studio--detail .main-content {
+    padding-top: 0;
+    overflow: visible;
+  }
+
+  .paintings-studio--detail .paintings-studio__gallery-shell {
+    background: var(--surface-panel);
+    overflow: hidden;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  /* ヒーロー・テキスト・サムネ帯の左右余白は globals の `--sp-content-inset` で統一 */
+  .paintings-studio--detail .paintings-studio__gallery-shell > .paintings-studio__detail-root {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: var(--detail-root-pad-top);
+    padding-bottom: 0;
+    overflow: hidden;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+    box-sizing: border-box;
+  }
+
+  .paintings-studio--detail .painting-detail.painting-detail--studio {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .paintings-studio--detail .painting-detail__viewport-frame {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100svh;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  .paintings-studio--detail
+    .painting-detail__viewport-frame
+    .painting-detail__content {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    box-sizing: border-box;
+  }
+
+  .paintings-studio--detail .painting-detail__row {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}

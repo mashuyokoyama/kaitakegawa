@@ -1,8 +1,49 @@
 @import "tailwindcss";
 
+/* 横スクロール禁止・横方向オーバースクロール抑止 */
+html {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overscroll-behavior-x: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 :root {
-  --background: #ffffff;
+  /* 純白ではなくごく薄い生成り／クリーム寄り。白として読める程度の差のみ */
+  --background: #faf8f3;
+  /* 一覧・個別の白パネル用。OS がダークモードでもオフホワイトのまま（--background は暗くなるため分離）。PC FIX: docs/PC_LAYOUT_BASELINE.md */
+  --surface-panel: #faf8f3;
   --foreground: #171717;
+  /* 1440px mock typography */
+  --type-base: 13px;
+  --type-caption: 12px;
+  /* サイト全体の基準字間（ロゴと同一 → メニュー・キャプション・タイトル等は継承） */
+  --letter-spacing: 0.01em;
+  /* SP FV で確定 — ロゴ左端＝コンテンツ左端、左右余白は同幅 */
+  --sp-content-inset: 28px;
+  --sp-content-inset-left: var(--sp-content-inset);
+  --sp-content-inset-right: var(--sp-content-inset);
+  --sp-text-align-left: var(--sp-content-inset-left);
+  /* SP: 固定ヘッダー — ロゴ位置（TOP FV と一覧・個別で共通） */
+  --sp-header-logo-top: clamp(24px, 5vh, 44px);
+  --sp-header-nav-top: calc(var(--sp-header-logo-top) + 46px);
+  --sp-header-nav-wrap-height: 48px;
+  --sp-header-content-gap: 16px;
+  --sp-header-main-offset: calc(
+    var(--sp-header-nav-top) + var(--sp-header-nav-wrap-height) +
+      var(--sp-header-content-gap)
+  );
+  --sp-header-min-height: calc(
+    var(--sp-header-nav-top) + var(--sp-header-nav-wrap-height)
+  );
 }
 
 @theme inline {
@@ -15,12 +56,1373 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
+    --surface-panel: #faf8f3;
     --foreground: #ededed;
+    --type-base: 13px;
+    --type-caption: 12px;
   }
 }
 
 body {
+  margin: 0;
+  padding: 0;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overscroll-behavior-x: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Hero reveal animation sequence */
+@keyframes heroBgReveal {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+@keyframes heroLogoReveal {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: none;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+@keyframes heroMenuReveal {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(-50%);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(-50%);
+  }
+}
+
+.hero-bg {
+  animation: heroBgReveal 1.2s ease-out forwards;
+  transform-origin: center center;
+}
+
+.hero-logo {
+  opacity: 0;
+  animation: heroLogoReveal 0.9s ease-out 0.8s forwards;
+}
+
+.hero-menu {
+  opacity: 0;
+  transform: translateY(-50%);
+  animation: heroMenuReveal 0.9s ease-out 1s forwards;
+}
+
+@keyframes fadeOutBlur {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(12px);
+  }
+}
+
+@keyframes fadeInSharp {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* FV用: レンズブレエフェクト（かかり初めはゆっくり、戻りはパッと） */
+@keyframes fvLensBlur {
+  0% {
+    filter: blur(0);
+  }
+  50% {
+    filter: blur(2px);
+  }
+  75% {
+    filter: blur(0);
+  }
+  100% {
+    filter: blur(0);
+  }
+}
+
+/* モバイル・タブレット: 背景画像を下に配置（上空きスペースを増やす） */
+@media (max-width: 1024px) {
+  .fv-bg-landing-2 {
+    background-position: center 65% !important;
+  }
+}
+
+/* ===== FVヘッダー位置関係 =====
+ * アートワークを下に配置（background-position center 65%）で上空きを増やす
+ * ロゴ: top 60px, left 80px / メニュー: right 80px
+ */
+/* FV メニューボタン: ロゴと同列 (transform なし)、フェードインのみ */
+@keyframes fvMenuButtonReveal {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+.fv-menu-button {
+  opacity: 0;
+  animation: fvMenuButtonReveal 0.9s ease-out 1s forwards;
+  margin-top: 1.4vh;
+}
+
+/* ロゴ: top 60px, left 80px / font-size相当 22px */
+.fv-logo {
+  display: flex;
+  align-items: center;
+  height: 110px;
+  line-height: 0;
+  margin: 0;
+}
+.fv-logo-img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* PC: Blobサイズ */
+.fv-menu-blob {
+  width: 110px;
+  height: 110px;
+}
+
+/* SP: ロゴ・Blob高さ */
+@media (max-width: 1024px) {
+  .fv-logo {
+    height: 78px !important;
+    margin-top: 0.6vh !important;
+    margin-left: 0.2vw !important;
+  }
+  .fv-logo-img {
+    height: 42px !important;
+  }
+  .fv-header {
+    padding: 40px 24px 0 40px !important;
+  }
+  .fv-menu-button {
+    margin-top: 1.2vh !important;
+  }
+  .fv-menu-blob {
+    width: 88px !important;
+    height: 78px !important;
+  }
+  .fv-menu-overlay {
+    padding-right: 0 !important;
+  }
+  .fv-menu-panel {
+    padding-right: 24px !important;
+  }
+}
+
+/* モバイル・タブレット: フラグメント間の余白を狭く */
+@media (max-width: 1024px) {
+  .fragment-item {
+    margin-bottom: 32px !important;
+  }
+  .fragment-item:last-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+/* フラグメントキャプション */
+.fragment-caption {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Fragments ページ：ZIP 写真を全幅・縦に 1 枚 ≒ 100vh（cover）で積む ── */
+.fragments-stack {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.fragments-stack__slide {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: block;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.fragments-stack__slide img {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  object-fit: cover;
+  object-position: center;
+}
+
+.fragments-stack .fragment-item {
+  margin-bottom: 0 !important;
+}
+
+/* Fragments: トップバーは透明（layout の `#c4bfb8` より後勝ちさせるため !important） */
+.paintings-studio.paintings-studio--fragments .header {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.paintings-studio.paintings-studio--fragments .paintings-studio__gallery-shell.paintings-studio__gallery-shell--fragments {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.paintings-studio.paintings-studio--fragments {
+  background-color: transparent;
+}
+
+/* 写真上でも読めるよう弱いシャドウ（一覧は白文字ベース） */
+.paintings-studio--fragments:not(.paintings-studio--detail) .header-logo {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+.paintings-studio--fragments:not(.paintings-studio--detail) .paintings-studio__nav-link {
+  color: rgba(255, 255, 255, 0.82);
+  opacity: 1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+.paintings-studio--fragments:not(.paintings-studio--detail)
+  .paintings-studio__nav-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.paintings-studio--fragments:not(.paintings-studio--detail)
+  .paintings-studio__nav-link--current {
+  color: #fff;
+  font-weight: 500;
+}
+
+.paintings-studio--fragments:not(.paintings-studio--detail) .paintings-studio__nav-sep {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+@media (min-width: 768px) {
+  .paintings-studio--fragments .main-content {
+    padding-top: 0;
+  }
+
+  .paintings-studio--fragments .paintings-studio__layout {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .paintings-studio--no-sidebar
+    .paintings-studio__gallery-shell.paintings-studio__gallery-shell--fragments {
+    left: 0;
+    right: 0;
+    max-width: none;
+    top: 0;
+    bottom: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .paintings-studio .paintings-studio__gallery-shell.paintings-studio__gallery-shell--fragments {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .paintings-studio--fragments .main-content {
+    padding-top: 0;
+  }
+}
+
+/* アートワークインデックス: 美術館風グリッド */
+@media (max-width: 768px) {
+  .artwork-index-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.artwork-index-card {
+  transition: opacity 0.2s ease;
+}
+.artwork-index-card:hover {
+  opacity: 0.85;
+}
+
+/* レンズブレオーバーレイ用（backdrop-filter、6pxで強調） */
+@keyframes fvLensBlurBackdrop {
+  0% {
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+  }
+  50% {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  100% {
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+  }
+}
+
+/* ===== TOP PAGE ONLY =====
+ * PC: 1440 mock 相当の絶対配置。
+ * SP: docs 参照モック — 上余白〜画像〜タイトル〜メニュー〜下端 contact（FIX 時は本コメントと併せて文書化） */
+.top-page {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh;
+  width: 100%;
+  max-width: 100%;
+  padding-top: 96px;
+  overflow: hidden;
+  background-color: #c4bfb8;
+  letter-spacing: var(--letter-spacing);
+  box-sizing: border-box;
+}
+
+.top-hero-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #c4bfb8;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  /* 左右対称 — 角だけ強調しないとフレーム内の左右バランスが崩れて見える */
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.1),
+    inset -1px 0 0 rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+}
+
+.top-hero-wrap .top-hero {
+  display: block;
+  flex-shrink: 0;
+  width: 42vw;
+  max-width: min(600px, 100%);
+  height: auto;
+  margin: 0;
+  /* taupe に寄せる：セピア強め＋軽い hue-rotate で青みを抑える（SP） */
+  mix-blend-mode: normal;
+  filter: sepia(0.48) contrast(0.79) brightness(0.72) saturate(0.7)
+    hue-rotate(-6deg);
+}
+
+/* 一覧 `.paintings-studio .header` と同一：ロゴ左上 28px / 18px / 14px（taupe 上は白） */
+.top-page__header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  height: 96px;
+  min-height: 96px;
+  margin: 0;
+  padding: 0;
+  background-color: #c4bfb8;
+  border: none;
+  box-sizing: border-box;
+}
+
+.top-page__logo.header-logo {
+  position: absolute;
+  left: 28px;
+  top: 18px;
+  transform: none;
+  margin: 0;
+  padding: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+  opacity: 1;
+  text-decoration: none;
+  text-transform: lowercase;
+  cursor: pointer;
+}
+
+.top-page__logo:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.top-page__nav.header-nav {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 14px);
+  transform: translate(-50%, -50%) scaleX(0.985);
+  transform-origin: center center;
+  margin: 0;
+  padding: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* 一覧ページと同じナビ字組（layout CSS 未読込のためここで指定） */
+.top-page__nav .paintings-studio__nav-link {
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  color: #000;
+  opacity: 0.6;
+  text-decoration: none;
+  text-transform: lowercase;
+}
+
+.top-page__nav .paintings-studio__nav-link:hover {
+  text-decoration: underline;
+  opacity: 1;
+}
+
+.top-page__nav .paintings-studio__nav-sep {
+  display: inline-block;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  padding: 0 0.5em;
+  color: #fff;
+  opacity: 1;
+  user-select: none;
+  vertical-align: baseline;
+}
+
+.top-page__stage {
+  position: relative;
+  width: 100%;
+  height: calc(100dvh - 96px);
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.top-page__contact {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: var(--type-base);
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 1.5;
+  text-transform: lowercase;
+}
+
+.top-page__contact-mail {
+  color: inherit;
+  text-decoration: none;
+}
+
+.top-page__contact-mail:hover {
+  color: rgba(0, 0, 0, 1);
+  text-decoration: underline;
+}
+
+/* ── PC ≥768px — ヒーローはステージ内・contact は下端 ── */
+@media (min-width: 768px) {
+  .top-hero-wrap .top-hero {
+    /* PC: やや暗め＋青み抑え（sepia 強め・軽いウォーム寄せ） */
+    filter: sepia(0.54) contrast(0.77) brightness(0.64) saturate(0.66)
+      hue-rotate(-5deg);
+  }
+
+  .top-page__nav .paintings-studio__nav-link,
+  .top-page__nav .paintings-studio__nav-sep {
+    font-size: 14px;
+    letter-spacing: var(--letter-spacing);
+  }
+
+  .top-page__hero-zone {
+    display: contents;
+  }
+
+  .top-hero-wrap {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    transform: translate3d(-50%, -50%, 0);
+  }
+
+  .top-page__nav.header-nav {
+    position: fixed;
+    left: 50%;
+    /* header 内にあったときと同じ: 96px バー中央 + 14px */
+    top: calc(96px / 2 + 14px);
+    transform: translate(-50%, -50%) scaleX(0.985);
+    transform-origin: center center;
+    z-index: 201;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .top-page__contact {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(28px, 6vh, 56px);
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    font-size: var(--type-base);
+  }
+}
+
+/* ── SP ≤767px — ヘッダーは一覧と同位置・KV 中央・contact 下端 ── */
+@media (max-width: 767px) {
+  .top-page {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    background-color: #c4bfb8;
+    padding: 0
+      max(var(--sp-content-inset-right), env(safe-area-inset-right))
+      max(24px, env(safe-area-inset-bottom))
+      max(var(--sp-content-inset-left), env(safe-area-inset-left));
+    box-sizing: border-box;
+  }
+
+  .top-page__header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    flex-shrink: 0;
+    height: auto;
+    min-height: var(--sp-header-min-height);
+    margin: 0;
+    padding: 0;
+    background-color: #c4bfb8;
+  }
+
+  .top-page__logo.header-logo {
+    position: absolute;
+    left: max(var(--sp-content-inset-left), env(safe-area-inset-left));
+    top: var(--sp-header-logo-top);
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    color: #fff;
+  }
+
+  .top-page__nav.header-nav {
+    position: absolute;
+    left: auto;
+    right: max(var(--sp-content-inset-right), env(safe-area-inset-right));
+    top: var(--sp-header-nav-top);
+    margin: 0;
+    padding: 0;
+    transform: none;
+    transform-origin: right center;
+    white-space: normal;
+    text-align: right;
+    font-size: 14px;
+    max-width: calc(
+      100vw - var(--sp-content-inset-left) - var(--sp-content-inset-right)
+    );
+  }
+
+  .top-page__nav .paintings-studio__nav-item {
+    display: inline;
+    vertical-align: baseline;
+  }
+
+  .top-page__nav .paintings-studio__nav-sep {
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .top-page__nav .paintings-studio__nav-link {
+    font-size: 14px;
+    color: #000;
+    opacity: 0.6;
+  }
+
+  /* digital の直後で改行（2行目: fragments | others | shop） */
+  .header-nav .paintings-studio__nav-item[data-nav-id="digital"]::after {
+    content: "\A";
+    white-space: pre;
+    display: inline;
+  }
+
+  .header-nav
+    .paintings-studio__nav-item[data-nav-id="fragments"]
+    > .paintings-studio__nav-sep {
+    display: none;
+  }
+
+  .top-page__stage {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    padding-top: 0;
+    box-sizing: border-box;
+  }
+
+  .top-page__hero-zone {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+
+  .top-hero-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 520px;
+    margin: 0;
+    flex-shrink: 0;
+    padding: 6px;
+    background-color: #c4bfb8;
+    z-index: 1;
+  }
+
+  .top-hero-wrap .top-hero {
+    width: 100%;
+    max-width: none;
+  }
+
+  .top-page__contact {
+    flex-shrink: 0;
+    margin-top: auto;
+    margin-bottom: 0;
+    padding-top: clamp(20px, 5vh, 40px);
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.55);
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
+    padding-left: 0;
+    padding-right: 0;
+    box-sizing: border-box;
+  }
+}
+
+/* ===== SHOP PAGE ===== */
+.shop-page__message {
+  margin: 0;
+  padding: clamp(56px, 12vh, 120px) clamp(24px, 5vw, 48px);
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.6);
+  text-transform: lowercase;
+  letter-spacing: var(--letter-spacing);
+  line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  .shop-page__message {
+    padding: 24px 0 clamp(40px, 10vh, 64px);
+    text-align: center;
+  }
+}
+
+/* Paintings / sketches / digital — detail page
+ * BASELINE: 寸法・配置は docs/ARTWORK_DETAIL_SPEC.md「確定 baseline」。背景は本ブロックで transparent（非表示）。
+ * モック色を戻すときは spec のモック参照値を --painting-detail-*-bg に設定。 */
+.painting-detail {
+  /* ── A. メイン正方形ガイド（背景は非表示・寸法は維持） ── */
+  --painting-detail-hero-slot-width: 640px;
+  --painting-detail-hero-slot-bg: transparent;
+  --painting-detail-text-gap: 40px;
+  /* ── B. 詳細サムネ列（背景は非表示・幅・位置は維持） ── */
+  --painting-detail-detail-strip-width: 160px;
+  --painting-detail-detail-strip-gap: 32px;
+  --painting-detail-detail-strip-initial-height: var(--painting-detail-hero-slot-width);
+  --painting-detail-detail-strip-bg: transparent;
+  --painting-detail-detail-strip-inner-gap: 8px;
+  --painting-detail-detail-strip-inner-padding: 8px;
+  /* SP: 水色帯内の横スクロールサムネ */
+  --painting-detail-detail-thumb-size-sp: 96px;
+  --painting-detail-detail-strip-inner-gap-sp: 10px;
+  --painting-detail-detail-strip-inner-padding-sp: 10px 8px;
+  --painting-detail-detail-strip-margin-top-sp: 1.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: var(--type-base);
+  line-height: 1.5;
+  color: #000;
+  letter-spacing: var(--letter-spacing);
+  box-sizing: border-box;
+}
+/* Inside studio shell: no full-page greige — chrome matches index */
+.painting-detail.painting-detail--studio {
+  min-height: 0;
+  background: transparent;
+  overflow-x: hidden;
+  touch-action: pan-y;
+}
+.painting-detail *,
+.painting-detail *::before,
+.painting-detail *::after {
+  box-sizing: inherit;
+}
+/*
+ * 白パネル内でブロック全体を中央寄せ。
+ */
+.painting-detail__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+}
+/* グレー＋テキスト列だけをパネル内で中央寄せ（水色帯の幅はレイアウト幅に含めない） */
+.painting-detail__row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+}
+/*
+ * 正方形ガイドスロットとテキストは同じ幅（列幅）。詳細帯の absolute 基準は本列（`.painting-detail__column`）。
+ */
+.painting-detail__column {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+  /* 一辺の上限はトークン（大きな画像の intrinsic 幅で flex が膨らまないよう min-width:0） */
+  width: var(--painting-detail-hero-slot-width);
+  max-width: 100%;
+  min-width: 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* 詳細サムネ列：PC は列の右外に絶対配置・高さ＝列全体（ヒーロー＋テキスト）でサムネを切らさない */
+.painting-detail__detail-strip {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: var(--painting-detail-detail-strip-bg);
+  box-sizing: border-box;
+}
+
+.painting-detail__detail-strip-inner {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--painting-detail-detail-strip-inner-gap);
+  padding-left: var(--painting-detail-detail-strip-inner-padding);
+  padding-right: var(--painting-detail-detail-strip-inner-padding);
+  padding-bottom: var(--painting-detail-detail-strip-inner-padding);
+  /* 先頭サムネ上辺＝ヒーロー上辺（上パディングなし） */
+  padding-top: 0;
+  /* 右サムネ列がある作品は、列内で縦スクロール可能にする */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.painting-detail__detail-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  margin: 0;
+  padding: 0;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+  font: inherit;
+  color: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.painting-detail__detail-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.painting-detail__detail-thumb:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.painting-detail__detail-thumb:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.painting-detail__detail-thumb--current {
+  border-color: rgba(0, 0, 0, 0.55);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+@media (min-width: 768px) {
+  .painting-detail__detail-strip {
+    position: absolute;
+    left: calc(100% + var(--painting-detail-detail-strip-gap));
+    top: 0;
+    bottom: 0;
+    width: var(--painting-detail-detail-strip-width);
+    height: auto;
+  }
+}
+
+/* グレー中央のまま右列を収めるため、やや狭いデスクトップでは右列だけ細く */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .painting-detail {
+    --painting-detail-detail-strip-width: 120px;
+    --painting-detail-detail-strip-gap: 24px;
+  }
+}
+/* 正方形ガイドスロット（背景は `--painting-detail-hero-slot-bg`、既定 transparent） */
+.painting-detail__hero {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--painting-detail-hero-slot-bg);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+.painting-detail__hero-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex-shrink: 1;
+  object-fit: contain;
+  object-position: top center;
+}
+
+.painting-detail__hero-open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.painting-detail__hero-open:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.45);
+  outline-offset: 3px;
+}
+
+.painting-detail__lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: none;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: #000;
+  cursor: zoom-out;
+  touch-action: manipulation;
+}
+
+body.painting-detail--lightbox-open .paintings-studio .header {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.painting-detail__lightbox-img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100vw;
+  max-height: 100dvh;
+  flex: 0 0 auto;
+  object-fit: contain;
+  object-position: center;
+  cursor: default;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: auto;
+}
+
+/* 横長作品のみ: 画像下端とテキストの距離を一定に保つ */
+.painting-detail.painting-detail--landscape {
+  --painting-detail-text-gap: 40px;
+}
+
+.painting-detail.painting-detail--landscape .painting-detail__hero {
+  aspect-ratio: auto;
+  height: auto;
+  overflow: visible;
+}
+
+.painting-detail.painting-detail--landscape .painting-detail__hero-img {
+  height: auto;
+}
+
+/* PC: 作品の intrinsic サイズを維持しつつ、ビューポート内に収める */
+@media (min-width: 768px) {
+  .painting-detail {
+    /* ヘッダー・上余白・キャプション最小分を差し引いたヒーロー上限 */
+    --painting-detail-hero-max-height-pc: calc(
+      100dvh - 96px - 40px - var(--painting-detail-text-gap) - clamp(96px, 14vh, 160px)
+    );
+  }
+
+  .painting-detail__column {
+    width: fit-content;
+    max-width: min(var(--detail-content-max-pc, 1040px), 100%);
+  }
+
+  .painting-detail__column:has(.painting-detail__detail-strip) {
+    max-width: min(
+      calc(
+        var(--detail-content-max-pc, 1040px) -
+          var(--painting-detail-detail-strip-width) -
+          var(--painting-detail-detail-strip-gap)
+      ),
+      100%
+    );
+  }
+
+  .painting-detail__hero {
+    aspect-ratio: auto;
+    width: auto;
+    max-width: 100%;
+    max-height: var(--painting-detail-hero-max-height-pc);
+    height: auto;
+    overflow: visible;
+    align-items: flex-start;
+  }
+
+  .painting-detail__hero-open {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: var(--painting-detail-hero-max-height-pc);
+    height: auto;
+  }
+
+  .painting-detail__hero-img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: var(--painting-detail-hero-max-height-pc);
+    object-fit: contain;
+    object-position: top center;
+  }
+}
+
+/* スロット列と同じ幅。テキスト左端＝ガイド正方形の左端 */
+.painting-detail__text {
+  margin-top: var(--painting-detail-text-gap);
+  padding: 0;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  text-align: left;
+}
+.painting-detail__title {
+  font-size: var(--type-base);
+  font-weight: 400;
+  margin: 0 0 0.5em;
+  padding: 0;
+  opacity: 1;
+}
+/* h1 直下: 年・媒体（モックの1行目相当） */
+.painting-detail__meta {
+  margin: 0 0 1em;
+  font-size: var(--type-base);
+  font-weight: 400;
+  line-height: 1.5;
+  color: inherit;
+  opacity: 0.88;
+}
+/* 説明段落 */
+.painting-detail__description {
+  margin: 0 0 1em;
+  font-size: var(--type-base);
+  font-weight: 400;
+  line-height: 1.55;
+  color: inherit;
+  opacity: 0.82;
+  max-width: 100%;
+}
+/* 価格・問い合わせ */
+.painting-detail__price {
+  margin: 0;
+  font-size: var(--type-base);
+  font-weight: 400;
+  line-height: 1.5;
+  color: inherit;
+  opacity: 0.72;
+}
+
+.painting-detail__pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+  margin-top: 20px;
+}
+
+.painting-detail__pager--bottom {
+  margin-top: clamp(88px, 12vh, 140px);
+  margin-bottom: 0;
+  width: 100%;
+  max-width: min(var(--detail-content-max-pc), 100%);
+  padding-top: 0;
+  align-self: center;
+}
+
+@media (min-width: 768px) {
+  .painting-detail__pager--bottom {
+    position: sticky;
+    bottom: 24px;
+    z-index: 5;
+    margin-top: clamp(88px, 10vh, 132px);
+  }
+}
+
+.painting-detail__pager-link {
+  font-size: var(--type-base);
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.72);
+  text-decoration: none;
+}
+
+.painting-detail__pager-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.painting-detail__pager-link--disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.painting-detail__pager-glyph {
+  display: none;
+}
+
+.painting-detail__pager-label {
+  display: inline;
+}
+@media (max-width: 640px) {
+  .painting-detail {
+    /* 狭い画面: 列＝コンテンツ幅いっぱい、グレーはその幅の正方形 */
+    --painting-detail-hero-slot-width: 100%;
+  }
+}
+
+/* 狭い幅: 画像 → キャプション → サムネ → Back/Next を 1 画面の flex 列に固定 */
+@media (max-width: 767px) {
+  .painting-detail {
+    --sp-detail-caption-gap: 36px;
+    --sp-detail-caption-line: 1.35;
+    --sp-detail-strip-gap: 24px;
+    --sp-detail-hero-max-width: 88%;
+    --sp-detail-measured-hero-h: 160px;
+    --sp-detail-pager-reserve: 0;
+    --painting-detail-text-gap: var(--sp-detail-caption-gap);
+  }
+
+  .painting-detail__column {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-height: 100svh;
+  }
+
+  .painting-detail__hero {
+    position: fixed;
+    top: calc(50svh - var(--sp-detail-measured-hero-h) / 2);
+    left: max(var(--sp-content-inset-left), env(safe-area-inset-left));
+    right: max(var(--sp-content-inset-right), env(safe-area-inset-right));
+    z-index: 1;
+    width: auto;
+    padding: 0;
+    box-sizing: border-box;
+    aspect-ratio: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .painting-detail__hero-open {
+    pointer-events: auto;
+    max-width: 100%;
+  }
+
+  .painting-detail__hero-img {
+    width: auto;
+    max-width: var(--sp-detail-hero-max-width);
+    height: auto;
+    max-height: min(
+      calc(100svh - var(--sp-header-main-offset) - 6.5rem),
+      calc((50svh - var(--sp-header-main-offset)) * 2)
+    );
+    flex-shrink: 1;
+    object-fit: contain;
+    object-position: center center;
+    pointer-events: none;
+  }
+
+  .painting-detail.painting-detail--landscape .painting-detail__hero {
+    aspect-ratio: auto;
+    overflow: visible;
+  }
+
+  .painting-detail.painting-detail--landscape .painting-detail__hero-img {
+    width: auto;
+    max-width: var(--sp-detail-hero-max-width);
+    height: auto;
+    max-height: min(
+      calc(100svh - var(--sp-header-main-offset) - 6.5rem),
+      calc((50svh - var(--sp-header-main-offset)) * 2)
+    );
+  }
+
+  .painting-detail__caption-block {
+    position: fixed;
+    top: calc(
+      50svh + var(--sp-detail-measured-hero-h) / 2 + var(--sp-detail-caption-gap)
+    );
+    left: max(var(--sp-content-inset-left), env(safe-area-inset-left));
+    right: max(var(--sp-content-inset-right), env(safe-area-inset-right));
+    z-index: 1;
+    box-sizing: border-box;
+  }
+
+  .painting-detail__text {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-top: 0;
+    padding: 0;
+    line-height: var(--sp-detail-caption-line);
+    box-sizing: border-box;
+  }
+
+  .painting-detail__title {
+    margin: 0 0 0.2em;
+    line-height: 1.3;
+  }
+
+  .painting-detail__meta {
+    margin: 0 0 0.45em;
+    line-height: var(--sp-detail-caption-line);
+  }
+
+  .painting-detail__description {
+    margin: 0 0 0.45em;
+    line-height: 1.4;
+  }
+
+  .painting-detail__price {
+    margin: 0;
+    line-height: var(--sp-detail-caption-line);
+  }
+
+  /* 長いタイトル・英数字の連続でもはみ出さず折り返す */
+  .painting-detail__title,
+  .painting-detail__meta,
+  .painting-detail__description,
+  .painting-detail__price {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  .painting-detail__pager--bottom {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    max-width: none;
+    pointer-events: none;
+    box-sizing: border-box;
+  }
+
+  .painting-detail__pager-link {
+    position: absolute;
+    top: 50%;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 40px;
+    padding: 6px;
+    color: rgba(0, 0, 0, 0.4);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .painting-detail__pager-link--prev {
+    left: calc(max(var(--sp-content-inset-left), env(safe-area-inset-left)) / 2);
+    transform: translate(-50%, -50%);
+  }
+
+  .painting-detail__pager-link--next {
+    right: calc(max(var(--sp-content-inset-right), env(safe-area-inset-right)) / 2);
+    transform: translate(50%, -50%);
+  }
+
+  .painting-detail__pager-link:hover,
+  .painting-detail__pager-link:active {
+    color: rgba(0, 0, 0, 0.58);
+    text-decoration: none;
+  }
+
+  .painting-detail__pager-link--disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .painting-detail__pager-glyph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .painting-detail__pager-chevron {
+    display: block;
+    width: 8px;
+    height: 12px;
+  }
+
+  .painting-detail__pager-label {
+    display: none;
+  }
+
+  .painting-detail__detail-strip {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin-top: var(--sp-detail-strip-gap);
+    padding: 0;
+  }
+
+  .painting-detail__detail-strip-inner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0 0 10px;
+    gap: var(--painting-detail-detail-strip-inner-gap-sp);
+  }
+
+  .painting-detail__detail-strip-inner::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  .painting-detail__detail-thumb {
+    width: var(--painting-detail-detail-thumb-size-sp);
+    flex: 0 0 var(--painting-detail-detail-thumb-size-sp);
+  }
+
+  .painting-detail__lightbox {
+    width: 100vw;
+    height: 100dvh;
+    min-height: 100dvh;
+    background: #000;
+  }
+
+  .painting-detail__lightbox-img {
+    width: auto;
+    height: auto;
+    max-width: 100vw;
+    max-height: 100dvh;
+    object-fit: contain;
+    object-position: center;
+  }
 }
