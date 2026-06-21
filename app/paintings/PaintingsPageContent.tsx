@@ -18,18 +18,6 @@ import {
   paintingsGallerySlugOrder,
 } from "./gallery-layout";
 
-const DESIGN_COLLECTION_NAMES = [
-  "Untitled Series",
-  "Collage Series",
-  "Coney Island Series",
-] as const;
-
-const DESIGN_COLLECTION_LINKS: Record<(typeof DESIGN_COLLECTION_NAMES)[number], string> = {
-  "Untitled Series": "/paintings/untitled-2026",
-  "Collage Series": "/paintings/form-of-boredom",
-  "Coney Island Series": "/paintings/playground-2019",
-};
-
 export default function PaintingsPageContent() {
   const searchParams = useSearchParams();
   const filterFromUrl = searchParams.get("filter");
@@ -83,10 +71,7 @@ export default function PaintingsPageContent() {
       }));
     return {
       years,
-      names: DESIGN_COLLECTION_NAMES.map((name) => ({
-        label: name,
-        href: DESIGN_COLLECTION_LINKS[name],
-      })),
+      names: [],
       activeHref:
         activeFilter !== "All" && /^\d{4}$/.test(activeFilter)
           ? `/paintings?filter=${encodeURIComponent(activeFilter)}`

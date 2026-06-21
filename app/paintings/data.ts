@@ -47,6 +47,7 @@ export const PAINTINGS: readonly PaintingItem[] = [
       "/paintings/bouquet_detail3.jpg",
     ],
   },
+  /* 未公開 — 公開時に復元
   {
     slug: "untitled-2026",
     title: "Untitled",
@@ -61,6 +62,7 @@ export const PAINTINGS: readonly PaintingItem[] = [
       "/paintings/untitled-2026_detail4.jpg",
     ],
   },
+  */
   {
     slug: "map-of-a-week-2024",
     title: "Map of a week",

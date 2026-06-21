@@ -25,18 +25,12 @@ export type PaintingsGalleryRow =
 export const PAINTINGS_GALLERY_ROWS: readonly PaintingsGalleryRow[] = [
   /* 1 縦2列 */
   { kind: "pair", slugs: ["rat-1", "rat-2"] },
-  /* 2–6 横: Bouquet → Untitled 2026（全幅）→ Map ほか */
+  /* 2–5 横: Bouquet → Map ほか */
   {
     kind: "solo",
     slug: "bouquet",
     align: "left",
     soloWidth: "bouquet-under-pair",
-  },
-  {
-    kind: "solo",
-    slug: "untitled-2026",
-    align: "left",
-    soloWidth: "wide-full-band",
   },
   { kind: "solo", slug: "map-of-a-week-2024", align: "left" },
   { kind: "solo", slug: "playground-2018", align: "right" },

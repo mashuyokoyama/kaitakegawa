@@ -177,12 +177,14 @@ export default function ArtworkIndexLayout({
                     linkClassName: "paintings-studio__pc-text-link--collection",
                   })}
                 </div>
+                {desktopTextList.collections.names.length > 0 ? (
                 <div className="paintings-studio__pc-text-values-names">
                   {renderPipeSeparatedLinks(desktopTextList.collections.names, {
                     activeHref: desktopTextList.collections.activeHref,
                     linkClassName: "paintings-studio__pc-text-link--collection",
                   })}
                 </div>
+                ) : null}
               </div>
             </section>
             <section className="paintings-studio__pc-text-section">
