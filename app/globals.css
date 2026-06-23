@@ -373,6 +373,31 @@ body::-webkit-scrollbar {
   .paintings-studio--fragments .main-content {
     padding-top: 0;
   }
+
+  /* SP: 写真を右90°回転して全画面表示 */
+  .fragments-stack__slide {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    min-height: 100svh;
+    height: 100dvh;
+    height: 100svh;
+  }
+
+  .fragments-stack__slide img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100dvh;
+    width: 100svh;
+    height: 100vw;
+    max-width: none;
+    transform: translate(-50%, -50%) rotate(90deg);
+    object-fit: cover;
+    object-position: center;
+  }
 }
 
 /* アートワークインデックス: 美術館風グリッド */
